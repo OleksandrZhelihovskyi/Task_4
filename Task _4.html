@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>title</title>
+</head>
+
+<body>
+    <script>
+        class Distance {
+            static currentDistance = 0;
+            static METER = 'm'
+            static KILOMETER = 'km'
+            static INCHE = 'inch'
+            static FOOT = 'feet'
+            static YARD = 'yard'
+            static MILE = 'mile'
+            constructor(value, unit) {
+                if (!unit) {
+                    console.log('Error')
+                    return
+                }
+                this.distance = [value, unit.slice(unit.indexOf(' ') + 1)]
+            }
+            add(distance) { }
+
+            toString(unit, obj = Distance.currentDistance) {
+                switch (unit) {
+                    case 'm': return obj + ' ' + unit
+                        break;
+                    case 'km': return obj / 1000 + ' ' + unit
+                        break;
+                    case 'inch': return obj / 0.0254 + ' ' + unit
+                        break;
+                    case 'feet': return obj / 0.3048 + ' ' + unit
+                        break;
+                    case 'yard': return obj / 0.9144 + ' ' + unit
+                        break;
+                    case 'mile': return obj / 1609.344 + ' ' + unit
+                }
+
+            }
+            set distance(args) {
+                switch (args[1]) {
+                    case 'm': Distance.currentDistance += args[0];
+                        break;
+                    case 'km': Distance.currentDistance += args[0] * 1000;
+                        break;
+                    case 'inch': Distance.currentDistance += args[0] * 0.0254;
+                        break;
+                    case 'feet': Distance.currentDistance += args[0] * 0.3048;
+                        break;
+                    case 'yard': Distance.currentDistance += args[0] * 0.9144;
+                        break;
+                    case 'mile': Distance.currentDistance += args[0] * 1609.344;
+
+                }
+            }
+
+        }
+
+        class ImmutableDistance extends Distance {
+            #result
+            constructor(value, unit) {
+
+                super(value, unit)
+                this.#result = Distance.currentDistance
+            }
+            
+            add(distance) {
+                return distance
+            }
+            toString(unit) {
+                return super.toString(unit, this.#result)
+            }
+            valueOf = function () {
+                return this.#result;
+            }
+        }
+////////////////////////////////1
+        const distance = new Distance(1, Distance.METER);
+        distance.add(new Distance(1, Distance.KILOMETER));
+        distance.add(new Distance(1, Distance.INCHE));
+        distance.add(new Distance(1, Distance.FOOT));
+        distance.add(new Distance(1, Distance.YARD));
+        distance.add(new Distance(1, Distance.MILE));
+        distance.add(new Distance(100000, Distance.MILE111));//Тут невірний ввід для нагдядності
+        console.log(distance.toString(Distance.METER))
+        console.log(distance.toString(Distance.KILOMETER))
+        console.log(distance.toString(Distance.INCHE))
+        console.log(distance.toString(Distance.FOOT))
+        console.log(distance.toString(Distance.YARD))
+        console.log(distance.toString(Distance.MILE))
+        console.log(distance.toString(Distance.MILE))
+///////////////////////////////////////////////////2
+        const immutableDistance = new ImmutableDistance(1, Distance.METER);
+        const newDistance = immutableDistance.add(new ImmutableDistance(1, Distance.KILOMETER));
+        console.log(immutableDistance.toString(Distance.METER)); // Має вивести "1 m"
+        console.log(newDistance.toString(Distance.KILOMETER)); // Має вивести "1001 m"
+///////////////////////////////////////////////////3
+        const immutableDistance1 = new ImmutableDistance(1, Distance.METER);
+        const immutableDistance2 = new ImmutableDistance(1, Distance.FOOT);
+        console.log(immutableDistance1, immutableDistance2);
+        const distanceInMeters = immutableDistance1 + immutableDistance2;
+        console.log(distanceInMeters, typeof distanceInMeters);
+
+    </script>
+</body>
+
+</html>
