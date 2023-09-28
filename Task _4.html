@@ -9,7 +9,7 @@
 <body>
     <script>
         class Distance {
-            static currentDistance = 0;
+            distance = 0
             static METER = 'm'
             static KILOMETER = 'km'
             static INCHE = 'inch'
@@ -17,15 +17,21 @@
             static YARD = 'yard'
             static MILE = 'mile'
             constructor(value, unit) {
-                if (!unit) {
-                    console.log('Error')
-                    return
+                try {
+                    if (!unit) {
+                        throw ("Error")
+                    } else this.dist = [value, unit.slice(unit.indexOf(' ') + 1)]
                 }
-                this.distance = [value, unit.slice(unit.indexOf(' ') + 1)]
+                catch (err) {
+                    return console.log(err)
+                }
             }
-            add(distance) { }
 
-            toString(unit, obj = Distance.currentDistance) {
+            add(other) {
+                this.distance += other.distance
+            }
+
+            toString(unit, obj = this.distance) {
                 switch (unit) {
                     case 'm': return obj + ' ' + unit
                         break;
@@ -41,19 +47,19 @@
                 }
 
             }
-            set distance(args) {
+            set dist(args) {
                 switch (args[1]) {
-                    case 'm': Distance.currentDistance += args[0];
+                    case 'm': this.distance = args[0];
                         break;
-                    case 'km': Distance.currentDistance += args[0] * 1000;
+                    case 'km': this.distance = args[0] * 1000;
                         break;
-                    case 'inch': Distance.currentDistance += args[0] * 0.0254;
+                    case 'inch': this.distance = args[0] * 0.0254;
                         break;
-                    case 'feet': Distance.currentDistance += args[0] * 0.3048;
+                    case 'feet': this.distance = args[0] * 0.3048;
                         break;
-                    case 'yard': Distance.currentDistance += args[0] * 0.9144;
+                    case 'yard': this.distance = args[0] * 0.9144;
                         break;
-                    case 'mile': Distance.currentDistance += args[0] * 1609.344;
+                    case 'mile': this.distance = args[0] * 1609.344;
 
                 }
             }
@@ -65,11 +71,12 @@
             constructor(value, unit) {
 
                 super(value, unit)
-                this.#result = Distance.currentDistance
+                this.#result = this.distance
             }
-            
-            add(distance) {
-                return distance
+
+            add(other) {
+                other.#result += this.#result
+                return other
             }
             toString(unit) {
                 return super.toString(unit, this.#result)
@@ -78,8 +85,9 @@
                 return this.#result;
             }
         }
-////////////////////////////////1
+        ////////////////////////////////1
         const distance = new Distance(1, Distance.METER);
+
         distance.add(new Distance(1, Distance.KILOMETER));
         distance.add(new Distance(1, Distance.INCHE));
         distance.add(new Distance(1, Distance.FOOT));
@@ -93,15 +101,15 @@
         console.log(distance.toString(Distance.YARD))
         console.log(distance.toString(Distance.MILE))
         console.log(distance.toString(Distance.MILE))
-///////////////////////////////////////////////////2
+        ///////////////////////////////////////////////////2
         const immutableDistance = new ImmutableDistance(1, Distance.METER);
         const newDistance = immutableDistance.add(new ImmutableDistance(1, Distance.KILOMETER));
         console.log(immutableDistance.toString(Distance.METER)); // Має вивести "1 m"
         console.log(newDistance.toString(Distance.KILOMETER)); // Має вивести "1001 m"
-///////////////////////////////////////////////////3
+        ///////////////////////////////////////////////////3
         const immutableDistance1 = new ImmutableDistance(1, Distance.METER);
         const immutableDistance2 = new ImmutableDistance(1, Distance.FOOT);
-        console.log(immutableDistance1, immutableDistance2);
+
         const distanceInMeters = immutableDistance1 + immutableDistance2;
         console.log(distanceInMeters, typeof distanceInMeters);
 
