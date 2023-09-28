@@ -20,7 +20,21 @@
                 try {
                     if (!unit) {
                         throw ("Error")
-                    } else this.dist = [value, unit.slice(unit.indexOf(' ') + 1)]
+                    }
+                    switch (unit) {
+                        case 'm': this.distance = value;
+                            break;
+                        case 'km': this.distance = value * 1000;
+                            break;
+                        case 'inch': this.distance = value * 0.0254;
+                            break;
+                        case 'feet': this.distance = value * 0.3048;
+                            break;
+                        case 'yard': this.distance = value * 0.9144;
+                            break;
+                        case 'mile': this.distance = value * 1609.344;
+
+                    }
                 }
                 catch (err) {
                     return console.log(err)
@@ -31,58 +45,40 @@
                 this.distance += other.distance
             }
 
-            toString(unit, obj = this.distance) {
+            toString(unit) {
                 switch (unit) {
-                    case 'm': return obj + ' ' + unit
+                    case 'm': return this.distance + ' ' + unit
                         break;
-                    case 'km': return obj / 1000 + ' ' + unit
+                    case 'km': return this.distance / 1000 + ' ' + unit
                         break;
-                    case 'inch': return obj / 0.0254 + ' ' + unit
+                    case 'inch': return this.distance / 0.0254 + ' ' + unit
                         break;
-                    case 'feet': return obj / 0.3048 + ' ' + unit
+                    case 'feet': return this.distance / 0.3048 + ' ' + unit
                         break;
-                    case 'yard': return obj / 0.9144 + ' ' + unit
+                    case 'yard': return this.distance / 0.9144 + ' ' + unit
                         break;
-                    case 'mile': return obj / 1609.344 + ' ' + unit
+                    case 'mile': return this.distance / 1609.344 + ' ' + unit
                 }
 
             }
-            set dist(args) {
-                switch (args[1]) {
-                    case 'm': this.distance = args[0];
-                        break;
-                    case 'km': this.distance = args[0] * 1000;
-                        break;
-                    case 'inch': this.distance = args[0] * 0.0254;
-                        break;
-                    case 'feet': this.distance = args[0] * 0.3048;
-                        break;
-                    case 'yard': this.distance = args[0] * 0.9144;
-                        break;
-                    case 'mile': this.distance = args[0] * 1609.344;
-
-                }
-            }
-
         }
 
         class ImmutableDistance extends Distance {
-            #result
+
             constructor(value, unit) {
 
                 super(value, unit)
-                this.#result = this.distance
             }
 
             add(other) {
-                other.#result += this.#result
+                other.distance += this.distance
                 return other
             }
             toString(unit) {
-                return super.toString(unit, this.#result)
+                return super.toString(unit)
             }
-            valueOf = function () {
-                return this.#result;
+            valueOf() {
+                return this.distance;
             }
         }
         ////////////////////////////////1
